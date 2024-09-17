@@ -1,0 +1,22 @@
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Provider
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  type: github
+  address: https://github.com/xUnholy/k8s-gitops-atomic-clusters
+  secretRef:
+    name: github-token
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Provider
+metadata:
+  name: flux-system-dispatch
+  namespace: flux-system
+spec:
+  type: githubdispatch
+  address: https://github.com/xUnholy/k8s-gitops-atomic-clusters
+  secretRef:
+    name: github-token

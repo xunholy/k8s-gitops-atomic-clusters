@@ -1,0 +1,10 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: google-sample-charts
+  namespace: flux-system
+spec:
+  interval: 120m
+  type: oci
+  url: oci://us-docker.pkg.dev/google-samples/charts

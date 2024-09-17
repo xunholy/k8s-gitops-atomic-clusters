@@ -1,0 +1,16 @@
+---
+apiVersion: networking.gke.io/v1
+kind: MultiClusterIngress
+metadata:
+  name: demo-2-ingress
+  namespace: demo-2
+  annotations:
+    # Hardcoded IP address for the ingress GCLB
+    # networking.gke.io/static-ip: 34.120.31.190
+    # networking.gke.io/pre-shared-certs: "whereamicert"
+spec:
+  template:
+    spec:
+      backend:
+        serviceName: demo-2-mcs
+        servicePort: 8080

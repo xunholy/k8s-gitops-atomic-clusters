@@ -1,0 +1,55 @@
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.raspbernetes.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kcc-operator
+  namespace: flux-system
+spec:
+  interval: 30m
+  retryInterval: 1m
+  timeout: 3m
+  path: "kubernetes/namespaces/base/configconnector-operator-system/operator-system"
+  prune: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+---
+# yaml-language-server: $schema=https://kubernetes-schemas.raspbernetes.com/kustomize.toolkit.fluxcd.io/kustomization_v1.json
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kcc-controller
+  namespace: flux-system
+spec:
+  interval: 30m
+  retryInterval: 1m
+  timeout: 3m
+  path: "kubernetes/namespaces/base/configconnector-operator-system/config"
+  prune: true
+  force: true
+  wait: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  dependsOn:
+    - name: kcc-operator
+      namespace: flux-system
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: cnrm-resource-stats-recorder
+      namespace: cnrm-system
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: cnrm-webhook-manager
+      namespace: cnrm-system
+    - apiVersion: apps/v1
+      kind: StatefulSet
+      name: cnrm-controller-manager
+      namespace: cnrm-system
+    - apiVersion: apps/v1
+      kind: StatefulSet
+      name: cnrm-deletiondefender
+      namespace: cnrm-system

@@ -1,0 +1,30 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: tenant-bravo-repo
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  ref:
+    branch: main
+  secretRef:
+    name: flux-system
+  url: https://github.com/xunholy/k8s-gitops-atomic-clusters.git
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: tenant-bravo
+  namespace: team-bravo-tenant
+spec:
+  # serviceAccountName: team-bravo
+  interval: 5m0s
+  retryInterval: 2m0s
+  sourceRef:
+    kind: GitRepository
+    name: tenant-bravo-repo
+    namespace: flux-system
+  prune: true
+  wait: false
+  path: ./apps/overlays/prod/bravo

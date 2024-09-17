@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-2
+  labels:
+    # toolkit.fluxcd.io/tenant: team-bravo
+    kustomize.toolkit.fluxcd.io/prune: disabled
+    bravo-team-shared-gateway-access: "true"

@@ -1,0 +1,23 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: all
+spec:
+  template:
+    metadata:
+      annotations:
+        # REQUIRED: Allow the cluster autoscaler to evict the Flux controller pods.
+        # https://fluxcd.io/flux/cheatsheets/bootstrap/#safe-to-evict
+        cluster-autoscaler.kubernetes.io/safe-to-evict: "true"
+    spec:
+      containers:
+        - name: manager
+          # REQUIRED: Increase requests to avoid auto adjustments from auto-pilot
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 1Gi
+            requests:
+              cpu: 1000m
+              memory: 1Gi

@@ -1,0 +1,14 @@
+---
+# Note: DO NOT DELETE - This needs to be manually restored if deleted.
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMWorkloadIdentityPool
+metadata:
+  name: github-oidc-pool
+  namespace: management-system
+spec:
+  projectRef:
+    external: "projects/k8s-gitops-atomic-clusters"
+  location: "global"
+  displayName: "github-oidc-pool"
+  description: "A workload identity pool for GitHub OIDC"
+  disabled: false

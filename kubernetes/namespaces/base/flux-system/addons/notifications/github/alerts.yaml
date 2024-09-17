@@ -1,0 +1,37 @@
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Alert
+metadata:
+  name: flux-system
+  namespace: flux-system
+spec:
+  eventSeverity: info
+  eventSources:
+  - kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  - kind: Kustomization
+    name: flux-system
+    namespace: flux-system
+  providerRef:
+    name: flux-system
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Alert
+metadata:
+  name: flux-system-dispatch
+  namespace: flux-system
+spec:
+  summary: "cluster-00"
+  eventSeverity: error
+  eventSources:
+  - kind: GitRepository
+    name: flux-system
+    namespace: flux-system
+  - kind: Kustomization
+    name: flux-system
+    namespace: flux-system
+  providerRef:
+    name: flux-system-dispatch
+  eventMetadata:
+    app.kubernetes.io/cluster: "cluster-00"

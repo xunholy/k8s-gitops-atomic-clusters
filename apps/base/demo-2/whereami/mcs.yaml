@@ -1,0 +1,16 @@
+---
+apiVersion: networking.gke.io/v1
+kind: MultiClusterService
+metadata:
+  name: demo-2-mcs
+  namespace: demo-2
+spec:
+  template:
+    spec:
+      selector:
+        app: whereami
+      ports:
+      - name: http
+        protocol: TCP
+        port: 8080
+        targetPort: 8080

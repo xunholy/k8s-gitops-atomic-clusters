@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    cnrm.cloud.google.com/project-id: k8s-gitops-atomic-clusters
+  labels:
+    kustomize.toolkit.fluxcd.io/prune: disabled
+  name: management-system

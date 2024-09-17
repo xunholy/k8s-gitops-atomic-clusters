@@ -1,0 +1,68 @@
+---
+apiVersion: container.cnrm.cloud.google.com/v1beta1
+kind: ContainerCluster
+metadata:
+  name: cluster-01
+  namespace: management-system
+  annotations:
+    cnrm.cloud.google.com/project-id: k8s-gitops-atomic-clusters
+spec:
+  enableAutopilot: true
+  location: us-east1
+  releaseChannel:
+    channel: RAPID
+  workloadIdentityConfig:
+    workloadPool: k8s-gitops-atomic-clusters.svc.id.goog
+---
+apiVersion: gkehub.cnrm.cloud.google.com/v1beta1
+kind: GKEHubMembership
+metadata:
+  name: cluster-01
+  namespace: management-system
+  annotations:
+    cnrm.cloud.google.com/project-id: k8s-gitops-atomic-clusters
+spec:
+  location: global
+  authority:
+    # Issuer must contain a link to a valid JWT issuer. Your ContainerCluster is one. To use it, replace ${PROJECT_ID?} with your project ID.
+    issuer: https://container.googleapis.com/v1/projects/k8s-gitops-atomic-clusters/locations/us-east1/clusters/cluster-01
+  endpoint:
+    gkeCluster:
+      resourceRef:
+        name: cluster-01
+---
+apiVersion: gkehub.cnrm.cloud.google.com/v1beta1
+kind: GKEHubFeature
+metadata:
+  name: cluster-01
+  namespace: management-system
+  annotations:
+    cnrm.cloud.google.com/project-id: k8s-gitops-atomic-clusters
+spec:
+  location: global
+  # The resourceID must be "multiclusteringress" if you want to use multi-cluster
+  # ingress feature.
+  resourceID: multiclusteringress
+  spec:
+    multiclusteringress:
+      configMembershipRef:
+        name: cluster-01
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Alert
+metadata:
+  name: cluster-01
+  namespace: flux-system
+spec:
+  summary: "cluster-01"
+  eventSeverity: info
+  eventSources:
+  - kind: Kustomization
+    name: 'cluster-01'
+    namespace: flux-system
+  providerRef:
+    name: flux-system-dispatch
+  eventMetadata:
+    project: "k8s-gitops-atomic-clusters"
+    cluster: "cluster-01"
+    location: "us-east1"

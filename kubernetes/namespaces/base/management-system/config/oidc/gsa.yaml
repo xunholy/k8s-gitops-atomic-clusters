@@ -1,0 +1,36 @@
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMServiceAccount
+metadata:
+  name: github-oidc
+  namespace: management-system
+spec:
+  displayName: Service Account for GitHub Actions
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicy
+metadata:
+  name: github-oidc-pool-binding
+  namespace: management-system
+spec:
+  resourceRef:
+    kind: IAMServiceAccount
+    name: github-oidc
+  bindings:
+    - role: roles/iam.workloadIdentityUser
+      members:
+        - principalSet://iam.googleapis.com/projects/892666479770/locations/global/workloadIdentityPools/github-oidc-pool/attribute.repository/xUnholy/k8s-gitops-atomic-clusters
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMPolicyMember
+metadata:
+  name: github-oidc
+  namespace: management-system
+spec:
+  memberFrom:
+    serviceAccountRef:
+      name: github-oidc
+  resourceRef:
+    kind: Project
+    external: projects/k8s-gitops-atomic-clusters
+  role: roles/container.admin

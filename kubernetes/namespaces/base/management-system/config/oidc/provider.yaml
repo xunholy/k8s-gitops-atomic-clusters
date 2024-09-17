@@ -1,0 +1,19 @@
+---
+apiVersion: iam.cnrm.cloud.google.com/v1beta1
+kind: IAMWorkloadIdentityPoolProvider
+metadata:
+  name: github-provider
+  namespace: management-system
+spec:
+  projectRef:
+    external: "projects/k8s-gitops-atomic-clusters"
+  location: "global"
+  workloadIdentityPoolRef:
+    name: "github-oidc-pool"
+  attributeMapping:
+    google.subject: assertion.sub
+    # attribute.actor: assertion.actor
+    # attribute.aud: attribute.aud
+    attribute.repository: assertion.repository
+  oidc:
+    issuerUri: "https://token.actions.githubusercontent.com"
