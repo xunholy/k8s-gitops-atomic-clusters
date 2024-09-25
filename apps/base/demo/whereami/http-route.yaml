@@ -8,13 +8,13 @@ metadata:
     gateway: external-http
 spec:
   hostnames:
-  - "team-alpha.endpoints.k8s-gitops-atomic-clusters.cloud.goog"
+    - "team-alpha.endpoints.atomic-gke-clusters.cloud.goog"
   parentRefs:
-  - name: team-alpha-external-http
-    namespace: team-alpha-tenant
+    - name: team-alpha-external-http
+      namespace: team-alpha-tenant
   rules:
-  - backendRefs:
-    - group: net.gke.io
-      kind: ServiceImport
-      name: whereami
-      port: 80
+    - backendRefs:
+        - group: net.gke.io
+          kind: ServiceImport
+          name: whereami
+          port: 80

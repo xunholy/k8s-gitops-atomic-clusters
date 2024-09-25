@@ -11,6 +11,7 @@ spec:
   path: "kubernetes/namespaces/base/management-system/config/clusters/cluster-01"
   prune: true
   wait: true
+  force: true
   sourceRef:
     kind: GitRepository
     name: flux-system
@@ -30,6 +31,7 @@ spec:
   path: "kubernetes/namespaces/base/management-system/config/clusters/cluster-02"
   prune: true
   wait: true
+  force: true
   sourceRef:
     kind: GitRepository
     name: flux-system

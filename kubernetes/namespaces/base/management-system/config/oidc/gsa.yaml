@@ -19,7 +19,7 @@ spec:
   bindings:
     - role: roles/iam.workloadIdentityUser
       members:
-        - principalSet://iam.googleapis.com/projects/322357624682/locations/global/workloadIdentityPools/github-oidc-pool/attribute.repository/xunholy/k8s-gitops-atomic-clusters
+        - principalSet://iam.googleapis.com/projects/1090173588460/locations/global/workloadIdentityPools/github-oidc-pool/attribute.repository/xunholy/k8s-gitops-atomic-clusters
 ---
 apiVersion: iam.cnrm.cloud.google.com/v1beta1
 kind: IAMPolicyMember
@@ -32,5 +32,5 @@ spec:
       name: github-oidc
   resourceRef:
     kind: Project
-    external: projects/devops-melb-24
+    external: projects/atomic-gke-clusters
   role: roles/container.admin

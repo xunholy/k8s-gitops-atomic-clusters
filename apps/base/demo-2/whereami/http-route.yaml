@@ -6,13 +6,13 @@ metadata:
   namespace: demo-2
 spec:
   hostnames:
-  - "team-bravo.endpoints.k8s-gitops-atomic-clusters.cloud.goog"
+    - "team-bravo.endpoints.atomic-gke-clusters.cloud.goog"
   parentRefs:
-  - name: bravo-team-external-http
-    namespace: team-bravo-tenant
+    - name: bravo-team-external-http
+      namespace: team-bravo-tenant
   rules:
-  - backendRefs:
-    - group: net.gke.io
-      kind: ServiceImport
-      name: whereami
-      port: 80
+    - backendRefs:
+        - group: net.gke.io
+          kind: ServiceImport
+          name: whereami
+          port: 80

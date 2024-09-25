@@ -6,7 +6,7 @@ metadata:
   namespace: management-system
 spec:
   projectRef:
-    external: "projects/devops-melb-24"
+    external: "projects/atomic-gke-clusters"
   location: "global"
   workloadIdentityPoolRef:
     name: "github-oidc-pool"

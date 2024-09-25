@@ -59,7 +59,19 @@ Additionally, worth noting that once you have completed the following steps the 
 git clone https://github.com/<user/org>/k8s-gitops-atomic-clusters.git
 ```
 
-2. Navigate to the cloned directory and run the setup script
+2. Create a new GCP project
+
+3. Create the following secrets inside your GitHub repository:
+
+```bash
+GCP_PROJECT_NUMBER
+GCP_PROJECT_ID
+FLUX_GITHUB_PAT
+```
+
+**Note:** *The project number, project ID, and Flux PAT are used in the GitHub workflows to bootstrap new clusters automatically - You will need to create a GitHub Fine-grained PAT*
+
+4. Navigate to the cloned directory and run the setup script
 
 ```bash
 export PROJECT_ID=<YOUR PROJECT ID>
