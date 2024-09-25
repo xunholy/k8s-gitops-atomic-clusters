@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   annotations:
-    cnrm.cloud.google.com/project-id: k8s-gitops-atomic-clusters
+    cnrm.cloud.google.com/project-id: devops-melb-24-436709
   labels:
     kustomize.toolkit.fluxcd.io/prune: disabled
   name: management-system
