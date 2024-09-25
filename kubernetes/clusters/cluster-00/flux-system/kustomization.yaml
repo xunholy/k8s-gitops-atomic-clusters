@@ -13,7 +13,7 @@ patches:
         name: kustomize-controller
         namespace: flux-system
         annotations:
-          iam.gke.io/gcp-service-account: sops-sa@k8s-gitops-atomic-clusters.iam.gserviceaccount.com
+          iam.gke.io/gcp-service-account: sops-sa@devops-melb-24-436709.iam.gserviceaccount.com
     target:
       kind: ServiceAccount
       name: kustomize-controller
