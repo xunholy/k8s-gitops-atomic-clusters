@@ -11,7 +11,7 @@ spec:
     branch: main
   secretRef:
     name: flux-system
-  url: ssh://git@github.com/xunholy/k8s-gitops-atomic-clusters
+  url: ssh://git@github.com/olga-mir/k8s-gitops-atomic-clusters
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
