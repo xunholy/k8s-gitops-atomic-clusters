@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
 - namespace.yaml
 - ./config/clusters/ks.yaml
+- ./config/oidc
