@@ -7,17 +7,17 @@ on:
     inputs:
       projectID:
         type: string
-        description: 'GCP Project ID'
-        default: 'k8s-gitops-atomic-clusters'
+        description: "GCP Project ID"
+        default: "devops-melb-24"
         required: true
       clusterName:
         type: string
-        description: 'GKE Cluster Name'
+        description: "GKE Cluster Name"
         required: true
       location:
         type: string
-        description: 'GKE Location Name (Region or Zone)'
-        default: 'us-west1'
+        description: "GKE Location Name (Region or Zone)"
+        default: "australia-southeast1"
         required: true
 
 permissions:
@@ -28,50 +28,50 @@ jobs:
   bootstrap:
     runs-on: ubuntu-latest
     steps:
-    # actions/checkout MUST come before auth
-    - uses: 'actions/checkout@v3'
+      # actions/checkout MUST come before auth
+      - uses: "actions/checkout@v3"
 
-    - name: Run Bootstrap
-      run: echo "running tests..${{ toJSON(github.event.client_payload.metadata) }}"
+      - name: Run Bootstrap
+        run: echo "running tests..${{ toJSON(github.event.client_payload.metadata) }}"
 
-    - name: Override Defaults
-      id: override
-      run: |
-        echo "projectID=${{ github.event.inputs.projectID || github.event.client_payload.metadata.project }}" >> $GITHUB_OUTPUT
-        echo "clusterName=${{ github.event.inputs.clusterName || github.event.client_payload.metadata.cluster }}" >> $GITHUB_OUTPUT
-        echo "location=${{ github.event.inputs.location || github.event.client_payload.metadata.location }}" >> $GITHUB_OUTPUT
+      - name: Override Defaults
+        id: override
+        run: |
+          echo "projectID=${{ github.event.inputs.projectID || github.event.client_payload.metadata.project }}" >> $GITHUB_OUTPUT
+          echo "clusterName=${{ github.event.inputs.clusterName || github.event.client_payload.metadata.cluster }}" >> $GITHUB_OUTPUT
+          echo "location=${{ github.event.inputs.location || github.event.client_payload.metadata.location }}" >> $GITHUB_OUTPUT
 
-    - name: Setup Flux CLI
-      uses: fluxcd/flux2/action@main
+      - name: Setup Flux CLI
+        uses: fluxcd/flux2/action@main
 
-    - id: 'auth'
-      name: 'Authenticate to Google Cloud'
-      uses: 'google-github-actions/auth@v1'
-      with:
-        token_format: "access_token"
-        workload_identity_provider: 'projects/892666479770/locations/global/workloadIdentityPools/github-oidc-pool/providers/github-provider'
-        service_account: 'github-oidc@k8s-gitops-atomic-clusters.iam.gserviceaccount.com'
+      - id: "auth"
+        name: "Authenticate to Google Cloud"
+        uses: "google-github-actions/auth@v1"
+        with:
+          token_format: "access_token"
+          workload_identity_provider: "projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-oidc-pool/providers/github-provider"
+          service_account: "github-oidc@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
 
-    - id: 'get-credentials'
-      uses: 'google-github-actions/get-gke-credentials@v1'
-      with:
-        project_id: ${{ steps.override.outputs.projectID }}
-        cluster_name: ${{ steps.override.outputs.clusterName }}
-        location: ${{ steps.override.outputs.location }}
+      - id: "get-credentials"
+        uses: "google-github-actions/get-gke-credentials@v1"
+        with:
+          project_id: ${{ steps.override.outputs.projectID }}
+          cluster_name: ${{ steps.override.outputs.clusterName }}
+          location: ${{ steps.override.outputs.location }}
 
-    # The KUBECONFIG env var is automatically exported and picked up by kubectl.
-    - id: 'get-pods'
-      run: 'kubectl get pods -n flux-system'
+      # The KUBECONFIG env var is automatically exported and picked up by kubectl.
+      - id: "get-pods"
+        run: "kubectl get pods -n flux-system"
 
-    - name: 'Bootstrap FluxCD'
-      id: bootstrap
-      run: |
-        export GITHUB_TOKEN="${{ secrets.FLUX_GITHUB_PAT }}"
-        flux bootstrap github \
-          --components-extra=image-reflector-controller,image-automation-controller \
-          --owner="xunholy" \
-          --repository="k8s-gitops-atomic-clusters" \
-          --path=kubernetes/clusters/${{ steps.override.outputs.clusterName }}/ \
-          --branch=main \
-          --network-policy=true \
-          --token-auth
+      - name: "Bootstrap FluxCD"
+        id: bootstrap
+        run: |
+          export GITHUB_TOKEN="${{ secrets.FLUX_GITHUB_PAT }}"
+          flux bootstrap github \
+            --components-extra=image-reflector-controller,image-automation-controller \
+            --owner="xunholy" \
+            --repository="k8s-gitops-atomic-clusters" \
+            --path=kubernetes/clusters/${{ steps.override.outputs.clusterName }}/ \
+            --branch=main \
+            --network-policy=true \
+            --token-auth

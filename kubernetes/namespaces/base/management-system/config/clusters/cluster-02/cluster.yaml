@@ -5,14 +5,14 @@ metadata:
   name: cluster-02
   namespace: management-system
   annotations:
-    cnrm.cloud.google.com/project-id: k8s-gitops-atomic-clusters
+    cnrm.cloud.google.com/project-id: devops-melb-24
 spec:
   enableAutopilot: true
-  location: us-west1
+  location: australia-southeast2
   releaseChannel:
     channel: RAPID
   workloadIdentityConfig:
-    workloadPool: k8s-gitops-atomic-clusters.svc.id.goog
+    workloadPool: devops-melb-24.svc.id.goog
 ---
 apiVersion: gkehub.cnrm.cloud.google.com/v1beta1
 kind: GKEHubMembership
@@ -20,12 +20,12 @@ metadata:
   name: cluster-02
   namespace: management-system
   annotations:
-    cnrm.cloud.google.com/project-id: k8s-gitops-atomic-clusters
+    cnrm.cloud.google.com/project-id: devops-melb-24
 spec:
   location: global
   authority:
     # Issuer must contain a link to a valid JWT issuer. Your ContainerCluster is one. To use it, replace ${PROJECT_ID?} with your project ID.
-    issuer: https://container.googleapis.com/v1/projects/k8s-gitops-atomic-clusters/locations/us-west1/clusters/cluster-02
+    issuer: https://container.googleapis.com/v1/projects/devops-melb-24/locations/australia-southeast2/clusters/cluster-02
   endpoint:
     gkeCluster:
       resourceRef:
@@ -37,7 +37,7 @@ metadata:
   name: cluster-02
   namespace: management-system
   annotations:
-    cnrm.cloud.google.com/project-id: k8s-gitops-atomic-clusters
+    cnrm.cloud.google.com/project-id: devops-melb-24
 spec:
   location: global
   # The resourceID must be "multiclusteringress" if you want to use multi-cluster
@@ -57,12 +57,12 @@ spec:
   summary: "cluster-02"
   eventSeverity: info
   eventSources:
-  - kind: Kustomization
-    name: 'cluster-02'
-    namespace: flux-system
+    - kind: Kustomization
+      name: "cluster-02"
+      namespace: flux-system
   providerRef:
     name: flux-system-dispatch
   eventMetadata:
-    project: "k8s-gitops-atomic-clusters"
+    project: "devops-melb-24"
     cluster: "cluster-02"
-    location: "us-west1"
+    location: "australia-southeast2"

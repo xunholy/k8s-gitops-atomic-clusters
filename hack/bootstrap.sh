@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # This file is to bootstrap the initial management GKE cluster which will be called cluster-00.
 # Additionally it will setup tooling such as SOPS GCP KMS encryption.
 # https://cloud.google.com/config-connector/docs/how-to/advanced-install
@@ -21,7 +23,7 @@ fi
 
 # Management GKE cluster configuration
 export CLUSTER_NAME=cluster-00
-export CLUSTER_REGION=us-west1
+export CLUSTER_REGION=australia-southeast1
 # FluxCD configuration
 export DEFUALT_GITHUB_BRANCH=main
 export DEFUALT_GITHUB_REPO=k8s-gitops-atomic-clusters
@@ -30,9 +32,9 @@ export KCC_SERVICE_ACCOUNT_NAME=kcc-sa
 export SOPS_SERVICE_ACCOUNT_NAME=sops-sa
 export DEMO_NAME="gitops-gke"
 
-gcloud auth login
-gcloud auth application-default login
-gcloud config set project $PROJECT_ID
+# gcloud auth login
+# gcloud auth application-default login
+# gcloud config set project $PROJECT_ID
 
 gcloud services enable \
   servicemanagement.googleapis.com \
@@ -54,44 +56,44 @@ gcloud services enable \
   anthos.googleapis.com \
   dns.googleapis.com
 
-# Setup a KCC service account with appropriate permissions.
-gcloud iam service-accounts create ${KCC_SERVICE_ACCOUNT_NAME}
+# # Setup a KCC service account with appropriate permissions.
+# gcloud iam service-accounts create ${KCC_SERVICE_ACCOUNT_NAME}
 
-# TODO: This is not the best practice, but for the sake of the demo, we will give the service account owner access.
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-  --member="serviceAccount:${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
-  --role="roles/owner"
+# # TODO: This is not the best practice, but for the sake of the demo, we will give the service account owner access.
+# gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+#   --member="serviceAccount:${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+#   --role="roles/owner"
 
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-  --member="serviceAccount:${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
-  --role="roles/editor"
+# gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+#   --member="serviceAccount:${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+#   --role="roles/editor"
 
-# Setup a SOPS service account with appropriate permissions. This is used for encrypting secrets.
-gcloud iam service-accounts create ${SOPS_SERVICE_ACCOUNT_NAME}
+# # Setup a SOPS service account with appropriate permissions. This is used for encrypting secrets.
+# gcloud iam service-accounts create ${SOPS_SERVICE_ACCOUNT_NAME}
 
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-  --member="serviceAccount:${SOPS_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
-  --role="roles/editor"
+# gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+#   --member="serviceAccount:${SOPS_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+#   --role="roles/editor"
 
-gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-    --member="serviceAccount:${SOPS_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
-    --role="roles/cloudkms.cryptoKeyEncrypterDecrypter"
+# gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+#     --member="serviceAccount:${SOPS_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+#     --role="roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
-gcloud kms keyrings create sops --location global
-gcloud kms keys create sops-key --location global --keyring sops --purpose encryption
-gcloud kms keys list --location global --keyring sops
+# gcloud kms keyrings create sops --location global
+# gcloud kms keys create sops-key --location global --keyring sops --purpose encryption
+# gcloud kms keys list --location global --keyring sops
 
-# Setup the Management GKE cluster
-gcloud container clusters create-auto $CLUSTER_NAME \
-    --region $CLUSTER_REGION \
-    --project $PROJECT_ID \
-    --release-channel rapid
+# # Setup the Management GKE cluster
+# gcloud container clusters create-auto $CLUSTER_NAME \
+#     --region $CLUSTER_REGION \
+#     --project $PROJECT_ID \
+#     --release-channel rapid
 
-# Setup WLI for FluxCD and KCC
-gcloud iam service-accounts add-iam-policy-binding \
- ${SOPS_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
-  --member="serviceAccount:${PROJECT_ID}.svc.id.goog[flux-system/kustomize-controller]" \
-  --role="roles/iam.workloadIdentityUser"
+# # Setup WLI for FluxCD and KCC
+# gcloud iam service-accounts add-iam-policy-binding \
+#  ${SOPS_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
+#   --member="serviceAccount:${PROJECT_ID}.svc.id.goog[flux-system/kustomize-controller]" \
+#   --role="roles/iam.workloadIdentityUser"
 
 gcloud iam service-accounts add-iam-policy-binding \
   ${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
@@ -129,7 +131,6 @@ echo -e "GCLB_IP is $ALPHA_IP"
 gcloud compute addresses create team-bravo-tenant-api --global --project $PROJECT_ID
 export BRAVO_IP=`gcloud compute addresses describe team-bravo-tenant-api --project $PROJECT_ID --global --format="value(address)"`
 echo -e "GCLB_IP is $BRAVO_IP"
-
 
 # Create Service Endpoint
 cat <<EOF > demo-openapi.yaml
