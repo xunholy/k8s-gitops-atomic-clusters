@@ -32,5 +32,5 @@ spec:
       name: github-oidc
   resourceRef:
     kind: Project
-    external: projects/devops-melb-24
+    external: projects/devops-melb-24-436709
   role: roles/container.admin
