@@ -107,7 +107,7 @@ kubectl create secret generic github-token \
   --dry-run=client -oyaml \
   > kubernetes/namespaces/base/flux-system/addons/notifications/github/secret.enc.yaml
 
-#sops --encrypt --in-place kubernetes/namespaces/base/flux-system/addons/notifications/github/secret.enc.yaml
+sops --encrypt --in-place kubernetes/namespaces/base/flux-system/addons/notifications/github/secret.enc.yaml
 
 # Bootstrap FluxCD
 flux bootstrap github \
@@ -118,6 +118,8 @@ flux bootstrap github \
   --branch="$DEFUALT_GITHUB_BRANCH" \
   --personal=true \
   --private=false
+
+exit 0
 
 # Create public IP for XLB
 gcloud compute addresses create static-mci-ip --global --project $PROJECT_ID
