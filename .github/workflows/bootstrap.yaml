@@ -49,7 +49,7 @@ jobs:
         uses: "google-github-actions/auth@v1"
         with:
           token_format: "access_token"
-          workload_identity_provider: "projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-oidc-pool/providers/github-provider-2"
+          workload_identity_provider: "projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-oidc-pool/providers/github-provider-3"
           service_account: "github-oidc@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
 
       - id: "get-credentials"
