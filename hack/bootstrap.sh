@@ -36,25 +36,25 @@ export DEMO_NAME="gitops-gke"
 # gcloud auth application-default login
 # gcloud config set project $PROJECT_ID
 
-gcloud services enable \
-  servicemanagement.googleapis.com \
-  servicecontrol.googleapis.com \
-  cloudresourcemanager.googleapis.com \
-  cloudkms.googleapis.com \
-  compute.googleapis.com \
-  container.googleapis.com \
-  containerregistry.googleapis.com \
-  cloudbuild.googleapis.com \
-  cloudkms.googleapis.com \
-  gkeconnect.googleapis.com \
-  gkehub.googleapis.com \
-  iam.googleapis.com \
-  mesh.googleapis.com \
-  multiclusterservicediscovery.googleapis.com \
-  multiclusteringress.googleapis.com \
-  trafficdirector.googleapis.com \
-  anthos.googleapis.com \
-  dns.googleapis.com
+#gcloud services enable \
+#  servicemanagement.googleapis.com \
+#  servicecontrol.googleapis.com \
+#  cloudresourcemanager.googleapis.com \
+#  cloudkms.googleapis.com \
+#  compute.googleapis.com \
+#  container.googleapis.com \
+#  containerregistry.googleapis.com \
+#  cloudbuild.googleapis.com \
+#  cloudkms.googleapis.com \
+#  gkeconnect.googleapis.com \
+#  gkehub.googleapis.com \
+#  iam.googleapis.com \
+#  mesh.googleapis.com \
+#  multiclusterservicediscovery.googleapis.com \
+#  multiclusteringress.googleapis.com \
+#  trafficdirector.googleapis.com \
+#  anthos.googleapis.com \
+#  dns.googleapis.com
 
 # # Setup a KCC service account with appropriate permissions.
 # gcloud iam service-accounts create ${KCC_SERVICE_ACCOUNT_NAME}
@@ -83,11 +83,11 @@ gcloud services enable \
 # gcloud kms keys create sops-key --location global --keyring sops --purpose encryption
 # gcloud kms keys list --location global --keyring sops
 
-# # Setup the Management GKE cluster
-# gcloud container clusters create-auto $CLUSTER_NAME \
-#     --region $CLUSTER_REGION \
-#     --project $PROJECT_ID \
-#     --release-channel rapid
+# Setup the Management GKE cluster
+gcloud container clusters create-auto $CLUSTER_NAME \
+    --region $CLUSTER_REGION \
+    --project $PROJECT_ID \
+    --release-channel rapid
 
 # # Setup WLI for FluxCD and KCC
 # gcloud iam service-accounts add-iam-policy-binding \
@@ -95,10 +95,10 @@ gcloud services enable \
 #   --member="serviceAccount:${PROJECT_ID}.svc.id.goog[flux-system/kustomize-controller]" \
 #   --role="roles/iam.workloadIdentityUser"
 
-gcloud iam service-accounts add-iam-policy-binding \
-  ${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
-  --member="serviceAccount:${PROJECT_ID}.svc.id.goog[cnrm-system/cnrm-controller-manager]" \
-  --role="roles/iam.workloadIdentityUser"
+# gcloud iam service-accounts add-iam-policy-binding \
+#   ${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
+#   --member="serviceAccount:${PROJECT_ID}.svc.id.goog[cnrm-system/cnrm-controller-manager]" \
+#   --role="roles/iam.workloadIdentityUser"
 
 # Add a one-time Github token to the cluster
 kubectl create secret generic github-token \
@@ -107,7 +107,7 @@ kubectl create secret generic github-token \
   --dry-run=client -oyaml \
   > kubernetes/namespaces/base/flux-system/addons/notifications/github/secret.enc.yaml
 
-sops --encrypt --in-place kubernetes/namespaces/base/flux-system/addons/notifications/github/secret.enc.yaml
+#sops --encrypt --in-place kubernetes/namespaces/base/flux-system/addons/notifications/github/secret.enc.yaml
 
 # Bootstrap FluxCD
 flux bootstrap github \
