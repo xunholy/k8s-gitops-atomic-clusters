@@ -13,6 +13,10 @@ spec:
     channel: RAPID
   workloadIdentityConfig:
     workloadPool: devops-melb-24-436709.svc.id.goog
+  nodeConfig:
+    diskSizeGb: 50
+    imageType: COS_CONTAINERD
+    machineType: e2-standard-8
 ---
 apiVersion: gkehub.cnrm.cloud.google.com/v1beta1
 kind: GKEHubMembership
