@@ -11,6 +11,7 @@ spec:
   path: "./apps/base/demo/whereami"
   prune: true
   wait: true
+  force: true
   sourceRef:
     kind: GitRepository
     name: tenant-alpha-repo

@@ -160,7 +160,6 @@ fi
 
 # Bootstrap FluxCD - This is generally already an idempotent command
 flux bootstrap github \
-  --components-extra=image-reflector-controller,image-automation-controller \
   --owner="$GITHUB_USER" \
   --repository="$DEFAULT_GITHUB_REPO" \
   --path=kubernetes/clusters/$CLUSTER_NAME \
@@ -169,81 +168,32 @@ flux bootstrap github \
   --private=false \
   --timeout=10m0s
 
-# # Create public IP for XLB
-# gcloud compute addresses create static-mci-ip --global --project $PROJECT_ID
-# export STATIC_MCI_IP=`gcloud compute addresses describe static-mci-ip --project $PROJECT_ID --global --format="value(address)"`
-# echo -e "GCLB_IP is $STATIC_MCI_IP"
+# Create public IP for XLB
+gcloud compute addresses create team-alpha-tenant-api --global --project $PROJECT_ID
+export ALPHA_IP=`gcloud compute addresses describe team-alpha-tenant-api --project $PROJECT_ID --global --format="value(address)"`
+echo -e "GCLB_IP is $ALPHA_IP"
 
-# gcloud compute addresses create team-alpha-tenant-api --global --project $PROJECT_ID
-# export ALPHA_IP=`gcloud compute addresses describe team-alpha-tenant-api --project $PROJECT_ID --global --format="value(address)"`
-# echo -e "GCLB_IP is $ALPHA_IP"
+cat <<EOF > alpha-openapi.yaml
+swagger: "2.0"
+info:
+  description: "Cloud Endpoints DNS"
+  title: "Cloud Endpoints DNS"
+  version: "1.0.0"
+paths: {}
+host: "team-alpha.endpoints.${PROJECT_ID}.cloud.goog"
+x-google-endpoints:
+- name: "team-alpha.endpoints.${PROJECT_ID}.cloud.goog"
+  target: "${ALPHA_IP}"
+EOF
+gcloud endpoints services deploy alpha-openapi.yaml --project $PROJECT_ID
 
-# gcloud compute addresses create team-bravo-tenant-api --global --project $PROJECT_ID
-# export BRAVO_IP=`gcloud compute addresses describe team-bravo-tenant-api --project $PROJECT_ID --global --format="value(address)"`
-# echo -e "GCLB_IP is $BRAVO_IP"
+# Create Certificate
+gcloud compute ssl-certificates create whereamicert \
+  --project $PROJECT_ID \
+  --domains=$DEMO_NAME.endpoints.$PROJECT_ID.cloud.goog \
+  --global
 
-# # Create Service Endpoint
-# cat <<EOF > demo-openapi.yaml
-# swagger: "2.0"
-# info:
-#   description: "Cloud Endpoints DNS"
-#   title: "Cloud Endpoints DNS"
-#   version: "1.0.0"
-# paths: {}
-# host: "$DEMO_NAME.endpoints.${PROJECT_ID}.cloud.goog"
-# x-google-endpoints:
-# - name: "$DEMO_NAME.endpoints.${PROJECT_ID}.cloud.goog"
-#   target: "${STATIC_MCI_IP}"
-# EOF
-# gcloud endpoints services deploy demo-openapi.yaml --project $PROJECT_ID
-
-# cat <<EOF > alpha-openapi.yaml
-# swagger: "2.0"
-# info:
-#   description: "Cloud Endpoints DNS"
-#   title: "Cloud Endpoints DNS"
-#   version: "1.0.0"
-# paths: {}
-# host: "team-alpha.endpoints.${PROJECT_ID}.cloud.goog"
-# x-google-endpoints:
-# - name: "team-alpha.endpoints.${PROJECT_ID}.cloud.goog"
-#   target: "${ALPHA_IP}"
-# EOF
-
-# gcloud endpoints services deploy alpha-openapi.yaml --project $PROJECT_ID
-
-# cat <<EOF > bravo-openapi.yaml
-# swagger: "2.0"
-# info:
-#   description: "Cloud Endpoints DNS"
-#   title: "Cloud Endpoints DNS"
-#   version: "1.0.0"
-# paths: {}
-# host: "team-bravo.endpoints.${PROJECT_ID}.cloud.goog"
-# x-google-endpoints:
-# - name: "team-bravo.endpoints.${PROJECT_ID}.cloud.goog"
-#   target: "${BRAVO_IP}"
-# EOF
-
-# gcloud endpoints services deploy bravo-openapi.yaml --project $PROJECT_ID
-
-# # Create Certificate
-# gcloud compute ssl-certificates create whereamicert \
-#   --project $PROJECT_ID \
-#   --domains=$DEMO_NAME.endpoints.$PROJECT_ID.cloud.goog \
-#   --global
-
-# gcloud compute ssl-certificates create alpha-tenant-cert \
-#       --project $PROJECT_ID \
-#       --domains="team-alpha.endpoints.$PROJECT_ID.cloud.goog" \
-#       --global
-
-# gcloud compute ssl-certificates create bravo-tenant-cert \
-#       --project $PROJECT_ID \
-#       --domains="team-bravo.endpoints.$PROJECT_ID.cloud.goog" \
-#       --global
-
-# # Step 3 -> https://cloud.google.com/kubernetes-engine/docs/how-to/multi-cluster-services
-# gcloud projects add-iam-policy-binding $PROJECT_ID \
-#     --member "serviceAccount:$PROJECT_ID.svc.id.goog[gke-mcs/gke-mcs-importer]" \
-#     --role "roles/compute.networkViewer"
+gcloud compute ssl-certificates create alpha-tenant-cert \
+      --project $PROJECT_ID \
+      --domains="team-alpha.endpoints.$PROJECT_ID.cloud.goog" \
+      --global

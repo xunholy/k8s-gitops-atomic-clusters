@@ -73,7 +73,6 @@ jobs:
         run: |
           export GITHUB_TOKEN="${{ secrets.FLUX_GITHUB_PAT }}"
           flux bootstrap github \
-            --components-extra=image-reflector-controller,image-automation-controller \
             --owner="xunholy" \
             --repository="k8s-gitops-atomic-clusters" \
             --path=kubernetes/clusters/${{ steps.override.outputs.clusterName }}/ \
