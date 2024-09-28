@@ -4,5 +4,4 @@ kind: Kustomization
 
 resources:
   - ../../base/alpha
-  - ../../base/bravo
 
