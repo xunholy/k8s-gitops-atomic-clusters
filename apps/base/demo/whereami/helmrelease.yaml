@@ -8,7 +8,7 @@ spec:
   interval: 5m
   chart:
     spec:
-      version: 1.2.20
+      version: 1.2.22
       chart: whereami
       sourceRef:
         kind: HelmRepository
@@ -43,24 +43,14 @@ spec:
       type: ClusterIP
   postRenderers:
     - kustomize:
-        patchesStrategicMerge:
-          - kind: Deployment
-            apiVersion: apps/v1
-            metadata:
+        patches:
+          - target:
+              version: v1
+              kind: Deployment
               name: whereami
               namespace: demo
-            spec:
-              template:
-                spec:
-                  affinity:
-                    podAntiAffinity:
-                      preferredDuringSchedulingIgnoredDuringExecution:
-                      - weight: 100
-                        podAffinityTerm:
-                          labelSelector:
-                            matchExpressions:
-                            - key: app
-                              operator: In
-                              values:
-                              - whereami
-                          topologyKey: topology.kubernetes.io/zone
+            patch: |
+              - op: add
+                path: /spec/template/spec/nodeSelector
+                value:
+                  cloud.google.com/gke-spot: "true"

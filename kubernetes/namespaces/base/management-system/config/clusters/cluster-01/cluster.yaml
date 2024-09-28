@@ -13,9 +13,6 @@ spec:
     channel: RAPID
   workloadIdentityConfig:
     workloadPool: trial-436910.svc.id.goog
-  nodeConfig:
-    spot: true
-    diskSizeGb: 50
 ---
 apiVersion: gkehub.cnrm.cloud.google.com/v1beta1
 kind: GKEHubMembership
