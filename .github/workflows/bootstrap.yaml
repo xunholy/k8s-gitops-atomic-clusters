@@ -20,6 +20,10 @@ on:
         default: "australia-southeast1"
         required: true
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   id-token: write
   contents: write
@@ -28,11 +32,12 @@ jobs:
   bootstrap:
     runs-on: ubuntu-latest
     steps:
-      # actions/checkout MUST come before auth
+      # REQUIRED: actions/checkout MUST come before auth
       - uses: "actions/checkout@v3"
 
-      - name: Run Bootstrap
-        run: echo "running tests..${{ toJSON(github.event.client_payload.metadata) }}"
+      - name: Extract Event Source
+        run: |
+          echo "event source..${{ toJSON(github.event.client_payload) }}"
 
       - name: Override Defaults
         id: override

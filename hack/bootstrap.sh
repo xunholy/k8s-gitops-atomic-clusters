@@ -166,7 +166,8 @@ flux bootstrap github \
   --path=kubernetes/clusters/$CLUSTER_NAME \
   --branch="$DEFAULT_GITHUB_BRANCH" \
   --personal=true \
-  --private=false
+  --private=false \
+  --timeout=10m0s
 
 # # Create public IP for XLB
 # gcloud compute addresses create static-mci-ip --global --project $PROJECT_ID
