@@ -79,4 +79,5 @@ jobs:
             --path=kubernetes/clusters/${{ steps.override.outputs.clusterName }}/ \
             --branch=main \
             --network-policy=true \
-            --token-auth
+            --token-auth \
+            --timeout=10m0s
