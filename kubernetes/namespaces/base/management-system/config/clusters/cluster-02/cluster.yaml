@@ -6,17 +6,22 @@ metadata:
   namespace: management-system
   annotations:
     cnrm.cloud.google.com/project-id: devops-melb-24-436709
+    cnrm.cloud.google.com/remove-default-node-pool: "true"
 spec:
-  enableAutopilot: true
   location: australia-southeast2
+  minMasterVersion: "1.30.3-gke.1969001"
+  gatewayApiConfig:
+    channel: "CHANNEL_STANDARD"
+  initialNodeCount: 1
   releaseChannel:
-    channel: RAPID
+    channel: "REGULAR"
+  subnetworkRef:
+    external: "projects/devops-melb-24-436709/regions/australia-southeast2/subnetworks/nodes-australia-southeast2"
+  networkRef:
+    external: "projects/devops-melb-24-436709/global/networks/gitops-gke-clusters"
   workloadIdentityConfig:
-    workloadPool: devops-melb-24-436709.svc.id.goog
-  nodeConfig:
-    diskSizeGb: 50
-    imageType: COS_CONTAINERD
-    machineType: e2-standard-8
+    identityNamespace: "devops-melb-24-436709.svc.id.goog"
+  datapathProvider: "ADVANCED_DATAPATH"
 ---
 apiVersion: gkehub.cnrm.cloud.google.com/v1beta1
 kind: GKEHubMembership
