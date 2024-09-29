@@ -40,23 +40,6 @@ spec:
       resourceRef:
         name: cluster-02
 ---
-apiVersion: gkehub.cnrm.cloud.google.com/v1beta1
-kind: GKEHubFeature
-metadata:
-  name: cluster-02
-  namespace: management-system
-  annotations:
-    cnrm.cloud.google.com/project-id: devops-melb-24-436709
-spec:
-  location: global
-  # The resourceID must be "multiclusteringress" if you want to use multi-cluster
-  # ingress feature.
-  resourceID: multiclusteringress
-  spec:
-    multiclusteringress:
-      configMembershipRef:
-        name: cluster-01
----
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Alert
 metadata:
