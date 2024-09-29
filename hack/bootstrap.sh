@@ -41,31 +41,31 @@ fi
 gcloud config set project $PROJECT_ID
 
 # Enable required services if not already enabled
-required_services=(
-  servicemanagement.googleapis.com
-  servicecontrol.googleapis.com
-  cloudresourcemanager.googleapis.com
-  cloudkms.googleapis.com
-  compute.googleapis.com
-  container.googleapis.com
-  containerregistry.googleapis.com
-  cloudbuild.googleapis.com
-  gkeconnect.googleapis.com
-  gkehub.googleapis.com
-  iam.googleapis.com
-  mesh.googleapis.com
-  trafficdirector.googleapis.com
-  anthos.googleapis.com
-  dns.googleapis.com
-)
+#required_services=(
+#  servicemanagement.googleapis.com
+#  servicecontrol.googleapis.com
+#  cloudresourcemanager.googleapis.com
+#  cloudkms.googleapis.com
+#  compute.googleapis.com
+#  container.googleapis.com
+#  containerregistry.googleapis.com
+#  cloudbuild.googleapis.com
+#  gkeconnect.googleapis.com
+#  gkehub.googleapis.com
+#  iam.googleapis.com
+#  mesh.googleapis.com
+#  trafficdirector.googleapis.com
+#  anthos.googleapis.com
+#  dns.googleapis.com
+#)
 
-for service in "${required_services[@]}"; do
-  if ! gcloud services list --enabled --filter="config.name=$service" --format="value(config.name)" | grep -q "$service"; then
-    gcloud services enable "$service"
-  else
-    echo "$service is already enabled"
-  fi
-done
+# for service in "${required_services[@]}"; do
+#   if ! gcloud services list --enabled --filter="config.name=$service" --format="value(config.name)" | grep -q "$service"; then
+#     gcloud services enable "$service"
+#   else
+#     echo "$service is already enabled"
+#   fi
+# done
 
 # Check and create KCC service account if it doesn't exist
 if ! gcloud iam service-accounts list --filter="email:${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" | grep -q ${KCC_SERVICE_ACCOUNT_NAME}; then
