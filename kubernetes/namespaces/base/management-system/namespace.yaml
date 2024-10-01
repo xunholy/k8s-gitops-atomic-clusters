@@ -3,7 +3,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   annotations:
-    cnrm.cloud.google.com/project-id: trial-436910
+    cnrm.cloud.google.com/project-id: atomic-gke-clusters
   labels:
     kustomize.toolkit.fluxcd.io/prune: disabled
   name: management-system

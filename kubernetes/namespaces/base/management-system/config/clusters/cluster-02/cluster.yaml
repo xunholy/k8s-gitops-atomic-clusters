@@ -5,14 +5,14 @@ metadata:
   name: cluster-02
   namespace: management-system
   annotations:
-    cnrm.cloud.google.com/project-id: trial-436910
+    cnrm.cloud.google.com/project-id: atomic-gke-clusters
 spec:
   enableAutopilot: true
   location: australia-southeast2
   releaseChannel:
     channel: RAPID
   workloadIdentityConfig:
-    workloadPool: trial-436910.svc.id.goog
+    workloadPool: atomic-gke-clusters.svc.id.goog
 ---
 apiVersion: gkehub.cnrm.cloud.google.com/v1beta1
 kind: GKEHubMembership
@@ -20,12 +20,12 @@ metadata:
   name: cluster-02
   namespace: management-system
   annotations:
-    cnrm.cloud.google.com/project-id: trial-436910
+    cnrm.cloud.google.com/project-id: atomic-gke-clusters
 spec:
   location: global
   authority:
     # Issuer must contain a link to a valid JWT issuer. Your ContainerCluster is one. To use it, replace ${PROJECT_ID?} with your project ID.
-    issuer: https://container.googleapis.com/v1/projects/trial-436910/locations/australia-southeast2/clusters/cluster-02
+    issuer: https://container.googleapis.com/v1/projects/atomic-gke-clusters/locations/australia-southeast2/clusters/cluster-02
   endpoint:
     gkeCluster:
       resourceRef:
@@ -37,7 +37,7 @@ metadata:
   name: cluster-02
   namespace: management-system
   annotations:
-    cnrm.cloud.google.com/project-id: trial-436910
+    cnrm.cloud.google.com/project-id: atomic-gke-clusters
 spec:
   location: global
   # The resourceID must be "multiclusteringress" if you want to use multi-cluster
@@ -63,6 +63,6 @@ spec:
   providerRef:
     name: flux-system-dispatch
   eventMetadata:
-    project: "trial-436910"
+    project: "atomic-gke-clusters"
     cluster: "cluster-02"
     location: "australia-southeast2"

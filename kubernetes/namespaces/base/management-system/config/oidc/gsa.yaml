@@ -32,5 +32,5 @@ spec:
       name: github-oidc
   resourceRef:
     kind: Project
-    external: projects/trial-436910
+    external: projects/atomic-gke-clusters
   role: roles/container.admin
