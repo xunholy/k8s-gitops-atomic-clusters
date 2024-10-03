@@ -66,3 +66,5 @@ spec:
     project: "atomic-gke-clusters"
     cluster: "cluster-01"
     location: "australia-southeast1"
+  inclusionList:
+    - ".*Health check passed.*"
