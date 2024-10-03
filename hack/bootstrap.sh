@@ -7,7 +7,6 @@
 # https://fluxcd.io/flux/guides/mozilla-sops/#google-cloud
 
 set -eou pipefail
-set -x
 
 if ! command -v sops &> /dev/null; then
     echo "sops must be installed" && exit 1
