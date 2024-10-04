@@ -18,9 +18,11 @@ spec:
   dependsOn:
     - name: kcc-controller
       namespace: flux-system
-  substituteFrom:
-    - kind: ConfigMap
-      name: cluster-config
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-config
+
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
@@ -41,6 +43,7 @@ spec:
   dependsOn:
     - name: kcc-controller
       namespace: flux-system
-  substituteFrom:
-    - kind: ConfigMap
-      name: cluster-config
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-config
