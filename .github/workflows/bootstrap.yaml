@@ -71,10 +71,10 @@ jobs:
           kubectl get namespace flux-system >/dev/null 2>&1 || kubectl create namespace flux-system
           # Always create or update the ConfigMap
           kubectl create configmap cluster-config -n flux-system \
-            --from-literal=GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }} \
-            --from-literal=GCP_PROJECT_NUMBER=${{ secrets.GCP_PROJECT_NUMBER }} \
-            --from-literal=GKE_CLUSTER_NAME=${{ steps.override.outputs.clusterName }} \
-            --from-literal=GKE_LOCATION=${{ steps.override.outputs.location }} \
+            --from-literal=GCP_PROJECT_ID="${{ secrets.GCP_PROJECT_ID }}" \
+            --from-literal=GCP_PROJECT_NUMBER="${{ secrets.GCP_PROJECT_NUMBER }}" \
+            --from-literal=GKE_CLUSTER_NAME="${{ steps.override.outputs.clusterName }}" \
+            --from-literal=GKE_LOCATION="${{ steps.override.outputs.location }}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Run FluxCD pre-installation checks
