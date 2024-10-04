@@ -5,8 +5,4 @@ creation_rules:
   - path_regex: kubernetes/.*/*.enc.ya?ml
     encrypted_regex: ^(data|stringData)$
     unencrypted-regex: ^(description|metadata)$
-<<<<<<< HEAD
-    gcp_kms: projects/atomic-gke-clusters/locations/global/keyRings/sops/cryptoKeys/sops-key
-=======
     gcp_kms: projects/devops-melb-24-436709/locations/global/keyRings/sops/cryptoKeys/sops-key
->>>>>>> a0ca8fb (replace project id)
