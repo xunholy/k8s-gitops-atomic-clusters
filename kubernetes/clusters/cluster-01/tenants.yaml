@@ -16,3 +16,7 @@ spec:
   dependsOn:
     - name: platform-namespaces
       namespace: flux-system
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-config

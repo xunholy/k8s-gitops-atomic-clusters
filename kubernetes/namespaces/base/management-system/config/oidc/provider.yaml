@@ -15,6 +15,6 @@ spec:
     # attribute.actor: assertion.actor
     # attribute.aud: attribute.aud
     attribute.repository: assertion.repository
-  attributeCondition: assertion.repository_owner=='xunholy'
+  attributeCondition: assertion.repository_owner=='${REPO_OWNER}'
   oidc:
     issuerUri: "https://token.actions.githubusercontent.com"

@@ -16,7 +16,7 @@ if ! command -v flux &> /dev/null; then
     echo "flux must be installed." && exit 1
 fi
 
-if [ -z "$GITHUB_USER" ] || [ -z "$GITHUB_TOKEN" ]; then
+if [ -z "$GITHUB_TOKEN" ]; then
   echo "Error required env variables are not set" && exit 1
 fi
 
@@ -30,6 +30,7 @@ export CLUSTER_REGION=australia-southeast1
 
 # FluxCD configuration
 export DEFAULT_GITHUB_BRANCH=main
+export DEFAULT_GITHUB_OWNER=xunholy
 export DEFAULT_GITHUB_REPO=k8s-gitops-atomic-clusters
 
 # GCP Tooling Service Accounts
@@ -173,6 +174,8 @@ kubectl create configmap cluster-config -n flux-system \
   --from-literal=GCP_PROJECT_NUMBER=$GCP_PROJECT_NUMBER \
   --from-literal=GKE_CLUSTER_NAME=$CLUSTER_NAME \
   --from-literal=GKE_LOCATION=$CLUSTER_REGION \
+  --from-literal=REPO_OWNER=$DEFAULT_GITHUB_OWNER \
+  --from-literal=REPO_NAME=$DEFAULT_GITHUB_REPO \
   --dry-run=client -o yaml | kubectl apply -f -
 
 # Bootstrap FluxCD - This is generally already an idempotent command

@@ -10,7 +10,7 @@ spec:
     branch: main
   secretRef:
     name: flux-system
-  url: https://github.com/xunholy/k8s-gitops-atomic-clusters.git
+  url: https://github.com/${REPO_OWNER}/${REPO_NAME}.git
 ---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization

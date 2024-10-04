@@ -19,7 +19,7 @@ spec:
   bindings:
     - role: roles/iam.workloadIdentityUser
       members:
-        - principalSet://iam.googleapis.com/projects/${GCP_PROJECT_NUMBER}/locations/global/workloadIdentityPools/github-oidc-pool/attribute.repository/xunholy/k8s-gitops-atomic-clusters
+        - principalSet://iam.googleapis.com/projects/${GCP_PROJECT_NUMBER}/locations/global/workloadIdentityPools/github-oidc-pool/attribute.repository/${REPO_OWNER}/${REPO_NAME}
 ---
 apiVersion: iam.cnrm.cloud.google.com/v1beta1
 kind: IAMPolicyMember
