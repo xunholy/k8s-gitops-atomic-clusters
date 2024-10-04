@@ -15,3 +15,7 @@ spec:
     name: flux-system
   decryption:
     provider: sops
+  postBuild:
+    substituteFrom:
+      - kind: ConfigMap
+        name: cluster-config

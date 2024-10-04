@@ -20,6 +20,7 @@ if [ -z "$GITHUB_USER" ] || [ -z "$GITHUB_TOKEN" ]; then
   echo "Error required env variables are not set" && exit 1
 fi
 
+# Management GCP project configuration
 export GCP_PROJECT_ID=atomic-gke-clusters
 export GCP_PROJECT_NUMBER=1090173588460
 
@@ -163,12 +164,16 @@ else
   echo "Github token secret already exists"
 fi
 
+# Create the namespace if it doesn't already exist
+kubectl get namespace flux-system >/dev/null 2>&1 || kubectl create namespace flux-system
 
-# Create a cluster config for FluxCD
-kubectl create namespace flux-system
+# Always create or update the ConfigMap
 kubectl create configmap cluster-config -n flux-system \
   --from-literal=GCP_PROJECT_ID=$GCP_PROJECT_ID \
-  --from-literal=GCP_PROJECT_NUMBER=$GCP_PROJECT_NUMBER
+  --from-literal=GCP_PROJECT_NUMBER=$GCP_PROJECT_NUMBER \
+  --from-literal=GKE_CLUSTER_NAME=$CLUSTER_NAME \
+  --from-literal=GKE_LOCATION=$CLUSTER_REGION \
+  --dry-run=client -o yaml | kubectl apply -f -
 
 # Bootstrap FluxCD - This is generally already an idempotent command
 flux bootstrap github \

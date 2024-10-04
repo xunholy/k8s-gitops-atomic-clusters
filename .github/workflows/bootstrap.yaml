@@ -68,13 +68,22 @@ jobs:
       - id: "get-pods"
         run: "kubectl get pods -n flux-system"
 
+      - name: "Create cluster config"
+        run: |
+          kubectl create namespace flux-system
+          kubectl create configmap cluster-config -n flux-system \
+            --from-literal=GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }} \
+            --from-literal=GCP_PROJECT_NUMBER=${{ secrets.GCP_PROJECT_NUMBER }}
+            --from-literal=GKE_CLUSTER_NAME=${{ steps.override.outputs.clusterName }} \
+            --from-literal=GKE_LOCATION=${{ steps.override.outputs.location }}
+
       - name: "Bootstrap FluxCD"
         id: bootstrap
         run: |
           export GITHUB_TOKEN="${{ secrets.FLUX_GITHUB_PAT }}"
           flux bootstrap github \
-            --owner="xunholy" \
-            --repository="k8s-gitops-atomic-clusters" \
+            --owner="${{ github.repository_owner }}" \
+            --repository="${{ github.event.repository.name }}" \
             --path=kubernetes/clusters/${{ steps.override.outputs.clusterName }}/ \
             --branch=main \
             --network-policy=true \
