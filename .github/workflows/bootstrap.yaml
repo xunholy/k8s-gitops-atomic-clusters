@@ -75,6 +75,8 @@ jobs:
             --from-literal=GCP_PROJECT_NUMBER="${{ secrets.GCP_PROJECT_NUMBER }}" \
             --from-literal=GKE_CLUSTER_NAME="${{ steps.override.outputs.clusterName }}" \
             --from-literal=GKE_LOCATION="${{ steps.override.outputs.location }}" \
+            --from-literal=REPO_OWNER="${{ github.repository_owner }}" \
+            --from-literal=REPO_NAME="${{ github.event.repository.name }}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Run FluxCD pre-installation checks
