@@ -6,7 +6,6 @@ metadata:
   namespace: management-system
   annotations:
     cnrm.cloud.google.com/project-id: ${GCP_PROJECT_ID}
-spec:
   enableAutopilot: true
   location: australia-southeast2
   releaseChannel:

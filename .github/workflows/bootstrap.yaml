@@ -8,7 +8,7 @@ on:
       projectID:
         type: string
         description: "GCP Project ID"
-        default: "atomic-gke-clusters"
+        default: "devops-melb-24-436709"
         required: true
       clusterName:
         type: string
