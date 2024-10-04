@@ -57,6 +57,7 @@ jobs:
           workload_identity_provider: "projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-oidc-pool/providers/github-provider"
           service_account: "github-oidc@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
 
+      # The KUBECONFIG env var is automatically exported and picked up by kubectl.
       - id: "get-credentials"
         uses: "google-github-actions/get-gke-credentials@v1"
         with:
@@ -64,15 +65,10 @@ jobs:
           cluster_name: ${{ steps.override.outputs.clusterName }}
           location: ${{ steps.override.outputs.location }}
 
-      # The KUBECONFIG env var is automatically exported and picked up by kubectl.
-      - id: "get-pods"
-        run: "kubectl get pods -n flux-system"
-
       - name: "Create cluster config"
         run: |
           # Create the namespace if it doesn't already exist
           kubectl get namespace flux-system >/dev/null 2>&1 || kubectl create namespace flux-system
-
           # Always create or update the ConfigMap
           kubectl create configmap cluster-config -n flux-system \
             --from-literal=GCP_PROJECT_ID=${{ secrets.GCP_PROJECT_ID }} \
@@ -80,6 +76,10 @@ jobs:
             --from-literal=GKE_CLUSTER_NAME=${{ steps.override.outputs.clusterName }} \
             --from-literal=GKE_LOCATION=${{ steps.override.outputs.location }} \
             --dry-run=client -o yaml | kubectl apply -f -
+
+      - name: Run FluxCD pre-installation checks
+        run: |
+          flux check --pre
 
       - name: "Bootstrap FluxCD"
         id: bootstrap
@@ -93,3 +93,7 @@ jobs:
             --network-policy=true \
             --token-auth \
             --timeout=10m0s
+
+      - name: Run FluxCD installation checks
+        run: |
+          flux check
