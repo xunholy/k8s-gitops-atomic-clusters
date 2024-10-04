@@ -71,12 +71,10 @@ FLUX_GITHUB_PAT
 
 **Note:** *The project number, project ID, and Flux PAT are used in the GitHub workflows to bootstrap new clusters automatically - You will need to create a GitHub Fine-grained PAT*
 
-4. Navigate to the cloned directory and run the setup script
+4. Navigate to the cloned directory and run the setup script - In the script there will be some variables you **MUST** change to match your desired configuration.
 
 ```bash
-export PROJECT_ID=<YOUR PROJECT ID>
 export GITHUB_TOKEN=<YOUR GITHUB TOKEN>
-export GITHUB_USER=<YOUR GITHUB USER>
 
 cd k8s-gitops-atomic-clusters
 ./hack/bootstrap.sh
@@ -84,7 +82,7 @@ cd k8s-gitops-atomic-clusters
 
 **Note:** *Change the exported variables to the appropriate values; Additional values can be adapted in the [bootstrap.sh](./hack/bootstrap.sh) script.*
 
-3. Follow the on-screen instructions to set up your GKE cluster
+5. Follow the on-screen instructions to set up your GKE cluster
 
 ## 📄 License
 
