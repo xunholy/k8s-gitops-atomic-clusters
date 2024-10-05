@@ -45,28 +45,25 @@ else
     gcloud auth login --update-adc
 fi
 
-gcloud config set project $PROJECT_ID
-
-# Enable required services if not already enabled
-required_services=(
-  servicemanagement.googleapis.com
-  servicecontrol.googleapis.com
-  cloudresourcemanager.googleapis.com
-  cloudkms.googleapis.com
-  compute.googleapis.com
-  container.googleapis.com
-  containerregistry.googleapis.com
-  cloudbuild.googleapis.com
-  gkeconnect.googleapis.com
-  gkehub.googleapis.com
-  iam.googleapis.com
-  mesh.googleapis.com
-  multiclusterservicediscovery.googleapis.com
-  multiclusteringress.googleapis.com
-  trafficdirector.googleapis.com
-  anthos.googleapis.com
-  dns.googleapis.com
-)
+#gcloud services enable \
+#  servicemanagement.googleapis.com \
+#  servicecontrol.googleapis.com \
+#  cloudresourcemanager.googleapis.com \
+#  cloudkms.googleapis.com \
+#  compute.googleapis.com \
+#  container.googleapis.com \
+#  containerregistry.googleapis.com \
+#  cloudbuild.googleapis.com \
+#  cloudkms.googleapis.com \
+#  gkeconnect.googleapis.com \
+#  gkehub.googleapis.com \
+#  iam.googleapis.com \
+#  mesh.googleapis.com \
+#  multiclusterservicediscovery.googleapis.com \
+#  multiclusteringress.googleapis.com \
+#  trafficdirector.googleapis.com \
+#  anthos.googleapis.com \
+#  dns.googleapis.com
 
 for service in "${required_services[@]}"; do
   if ! gcloud services list --enabled --filter="config.name=$service" --format="value(config.name)" | grep -q "$service"; then
@@ -113,17 +110,6 @@ if ! gcloud kms keys list --location global --keyring sops --format="value(name)
   gcloud kms keys list --location global --keyring sops
 fi
 
-
-# Setup the Management GKE cluster only if it doesn't exist
-if ! gcloud container clusters list --region=$CLUSTER_REGION --filter="name=$CLUSTER_NAME" --format="value(name)" | grep -q "$CLUSTER_NAME"; then
-  gcloud container clusters create-auto $CLUSTER_NAME \
-    --region $CLUSTER_REGION \
-    --project $PROJECT_ID \
-    --release-channel rapid
-else
-  echo "Cluster $CLUSTER_NAME already exists"
-fi
-
 # Setup Workload Identity for FluxCD and KCC
 # Bind FluxCD's kustomize-controller to the SOPS service account if not already bound
 if ! gcloud iam service-accounts get-iam-policy ${SOPS_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
@@ -151,6 +137,11 @@ else
     echo "Workload identity binding for cnrm-controller-manager already exists"
 fi
 
+# gcloud iam service-accounts add-iam-policy-binding \
+#   ${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
+#   --member="serviceAccount:${PROJECT_ID}.svc.id.goog[cnrm-system/cnrm-controller-manager]" \
+#   --role="roles/iam.workloadIdentityUser"
+
 # Add a one-time Github token to the cluster
 if ! kubectl get secret github-token --namespace=flux-system &> /dev/null; then
   echo "Creating SOPS keys"
@@ -160,10 +151,7 @@ if ! kubectl get secret github-token --namespace=flux-system &> /dev/null; then
     --dry-run=client -oyaml \
     > kubernetes/namespaces/base/flux-system/addons/notifications/github/secret.enc.yaml
 
-  sops --encrypt --in-place kubernetes/namespaces/base/flux-system/addons/notifications/github/secret.enc.yaml
-else
-  echo "Github token secret already exists"
-fi
+sops --encrypt --in-place kubernetes/namespaces/base/flux-system/addons/notifications/github/secret.enc.yaml
 
 # Create the namespace if it doesn't already exist
 kubectl get namespace flux-system >/dev/null 2>&1 || kubectl create namespace flux-system
