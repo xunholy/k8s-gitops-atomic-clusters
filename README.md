@@ -12,6 +12,10 @@ Once the newly created Fleet clusters are bootstrapped with FluxCD, they will au
   - [🖥️ Technology Stack](#️-technology-stack)
   - [🛠️ Requirements](#️-requirements)
   - [🚀 Getting Started](#-getting-started)
+  - [🧪 Test](#-test)
+  - [🔎 Troubleshooting](#-troubleshooting)
+    - [Handshake failure](#handshake-failure)
+    - [Connection failures](#connection-failures)
   - [📄 License](#-license)
 
 ## 📁 Directories
@@ -83,6 +87,61 @@ cd k8s-gitops-atomic-clusters
 **Note:** *Change the exported variables to the appropriate values; Additional values can be adapted in the [bootstrap.sh](./hack/bootstrap.sh) script.*
 
 5. Follow the on-screen instructions to set up your GKE cluster
+
+## 🧪 Test
+
+```bash
+curl https://team-alpha.endpoints.${GCP_PROJECT_ID}.cloud.goog
+```
+
+Or with canary header:
+
+```bash
+curl -H "env: canary" https://team-alpha.endpoints.${GCP_PROJECT_ID}.cloud.goog
+```
+
+## 🔎 Troubleshooting
+
+### Handshake failure
+
+```bash
+curl: (35) LibreSSL/3.3.6: error:1404B410:SSL routines:ST_CONNECT:sslv3 alert handshake failure
+```
+
+Check that certificate exists and is available:
+
+```bash
+gcloud compute ssl-certificates describe alpha-tenant-cert
+```
+
+You should see certificate payload and status `ACTIVE`. If the status is `PROVISIONING` like below, you may need to wait a few minutes for certificate to become available
+
+```yaml
+kind: compute#sslCertificate
+managed:
+  domainStatus:
+    team-alpha.endpoints.${GCP_PROJECT_ID}.cloud.goog: PROVISIONING
+  domains:
+  - team-alpha.endpoints.${GCP_PROJECT_ID}.cloud.goog
+  status: PROVISIONING
+name: alpha-tenant-cert
+type: MANAGED
+```
+
+### Connection failures
+
+Check that all resources are synced by Flux in all clusters:
+
+```bash
+flux get all -A
+```
+
+In `cluster-01` and `cluster-02` check that each `ServiceExport` has corresponding `ServiceImport`, it may take sometime for `ServiceImport` to get created by MCS.
+
+```bash
+kubectl get serviceexport -n demo
+kubectl get serviceimport -n demo
+```
 
 ## 📄 License
 
