@@ -27,4 +27,4 @@ spec:
     namespace: flux-system
   prune: true
   wait: false
-  path: ./apps/overlays/prod/alpha
+  path: ./apps/overlays/prod

@@ -20,7 +20,7 @@ spec:
       backendRefs:
         - group: net.gke.io
           kind: ServiceImport
-          name: whereami
+          name: whereami-canary
           port: 80
     - backendRefs:
         - group: net.gke.io
