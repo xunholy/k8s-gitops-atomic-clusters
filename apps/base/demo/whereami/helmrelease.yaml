@@ -41,16 +41,3 @@ spec:
   values:
     service:
       type: ClusterIP
-  postRenderers:
-    - kustomize:
-        patches:
-          - target:
-              version: v1
-              kind: Deployment
-              name: whereami
-              namespace: demo
-            patch: |
-              - op: add
-                path: /spec/template/spec/nodeSelector
-                value:
-                  cloud.google.com/gke-spot: "true"
