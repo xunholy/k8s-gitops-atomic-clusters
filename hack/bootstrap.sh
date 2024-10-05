@@ -226,13 +226,13 @@ x-google-endpoints:
 EOF
 gcloud endpoints services deploy alpha-openapi.yaml --project $GCP_PROJECT_ID
 
-# Create Certificate
-gcloud compute ssl-certificates create whereamicert \
-  --project $GCP_PROJECT_ID \
-  --domains=$DEMO_NAME.endpoints.$GCP_PROJECT_ID.cloud.goog \
-  --global
-
-gcloud compute ssl-certificates create alpha-tenant-cert \
-      --project $GCP_PROJECT_ID \
-      --domains="team-alpha.endpoints.$GCP_PROJECT_ID.cloud.goog" \
-      --global
+# # Create Certificate
+# gcloud compute ssl-certificates create whereamicert \
+#   --project $GCP_PROJECT_ID \
+#   --domains=$DEMO_NAME.endpoints.$GCP_PROJECT_ID.cloud.goog \
+#   --global
+# 
+# gcloud compute ssl-certificates create alpha-tenant-cert \
+#       --project $GCP_PROJECT_ID \
+#       --domains="team-alpha.endpoints.$GCP_PROJECT_ID.cloud.goog" \
+#       --global
