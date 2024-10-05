@@ -176,6 +176,8 @@ flux bootstrap github \
   --private=false \
   --timeout=10m0s
 
+exit 0
+
 # Create public IP for XLB
 gcloud compute addresses create team-alpha-tenant-api --global --project $PROJECT_ID
 export ALPHA_IP=`gcloud compute addresses describe team-alpha-tenant-api --project $PROJECT_ID --global --format="value(address)"`
