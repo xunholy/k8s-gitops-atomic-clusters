@@ -22,28 +22,3 @@ spec:
     substituteFrom:
       - kind: ConfigMap
         name: cluster-config
-
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: cluster-02
-  namespace: flux-system
-spec:
-  interval: 30m
-  retryInterval: 1m
-  timeout: 10m
-  path: "kubernetes/namespaces/base/management-system/config/clusters/cluster-02"
-  prune: true
-  wait: true
-  force: true
-  sourceRef:
-    kind: GitRepository
-    name: flux-system
-  dependsOn:
-    - name: kcc-controller
-      namespace: flux-system
-  postBuild:
-    substituteFrom:
-      - kind: ConfigMap
-        name: cluster-config
