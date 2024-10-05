@@ -5,3 +5,11 @@ kind: Kustomization
 resources:
   - ../../base/alpha
 
+patches:
+  - patch: |
+      - op: replace
+        path: /spec/path
+        value: ./apps/overlays/prod-canary
+    target:
+      kind: Kustomization
+      name: tenant-alpha

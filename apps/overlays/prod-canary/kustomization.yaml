@@ -1,0 +1,51 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base/demo
+
+# This is needed to ensure that the ServiceExport on the canary cluster has the correct ServiceImport name.
+patches:
+  - patch: |-
+      apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: whereami
+        namespace: team-alpha-tenant
+      spec:
+        patches:
+          - patch: |
+              - op: replace
+                path: /metadata/name
+                value: whereami-canary
+            target:
+              kind: ServiceExport
+              name: whereami
+              namespace: demo
+          - patch: |-
+              apiVersion: helm.toolkit.fluxcd.io/v2beta1
+              kind: HelmRelease
+              metadata:
+                name: whereami
+                namespace: demo
+              spec:
+                postRenderers:
+                  - kustomize:
+                      patches:
+                        - target:
+                            version: v1
+                            kind: Service
+                            name: whereami
+                          patch: |
+                            - op: replace
+                              path: /metadata/name
+                              value: whereami-canary
+            target:
+              kind: HelmRelease
+              name: whereami
+              namespace: demo
+    target:
+      kind: Kustomization
+      name: whereami
+      namespace: team-alpha-tenant

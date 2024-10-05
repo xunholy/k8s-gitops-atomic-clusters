@@ -39,7 +39,7 @@ else
     gcloud auth login --update-adc
 fi
 
-gcloud config set project $PROJECT_ID
+gcloud config set project $GCP_PROJECT_ID
 
 # for service in "${required_services[@]}"; do
 #   if ! gcloud services list --enabled --filter="config.name=$service" --format="value(config.name)" | grep -q "$service"; then
@@ -50,25 +50,25 @@ gcloud config set project $PROJECT_ID
 # done
 
 # Check and create KCC service account if it doesn't exist
-if ! gcloud iam service-accounts list --filter="email:${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" | grep -q ${KCC_SERVICE_ACCOUNT_NAME}; then
+if ! gcloud iam service-accounts list --filter="email:${KCC_SERVICE_ACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" | grep -q ${KCC_SERVICE_ACCOUNT_NAME}; then
   gcloud iam service-accounts create ${KCC_SERVICE_ACCOUNT_NAME}
-  gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-    --member="serviceAccount:${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+  gcloud projects add-iam-policy-binding ${GCP_PROJECT_ID} \
+    --member="serviceAccount:${KCC_SERVICE_ACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
     --role="roles/editor"
 else
   echo "KCC service account already exists"
 fi
 
 # Check and create SOPS service account if it doesn't exist
-if ! gcloud iam service-accounts list --filter="email:${SOPS_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" | grep -q ${SOPS_SERVICE_ACCOUNT_NAME}; then
+if ! gcloud iam service-accounts list --filter="email:${SOPS_SERVICE_ACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" | grep -q ${SOPS_SERVICE_ACCOUNT_NAME}; then
   gcloud iam service-accounts create ${SOPS_SERVICE_ACCOUNT_NAME}
-  gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-    --member="serviceAccount:${SOPS_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+  gcloud projects add-iam-policy-binding ${GCP_PROJECT_ID} \
+    --member="serviceAccount:${SOPS_SERVICE_ACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
     --role="roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
   # TODO: Determine if this is needed - try without it.
-  # gcloud projects add-iam-policy-binding ${PROJECT_ID} \
-  #   --member="serviceAccount:${SOPS_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com" \
+  # gcloud projects add-iam-policy-binding ${GCP_PROJECT_ID} \
+  #   --member="serviceAccount:${SOPS_SERVICE_ACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com" \
   #   --role="roles/editor"
 else
   echo "SOPS service account already exists"
@@ -145,26 +145,26 @@ gcloud container node-pools create $NODEPOOL_NAME \
 
 # Setup Workload Identity for FluxCD and KCC
 # Bind FluxCD's kustomize-controller to the SOPS service account if not already bound
-if ! gcloud iam service-accounts get-iam-policy ${SOPS_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
+if ! gcloud iam service-accounts get-iam-policy ${SOPS_SERVICE_ACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com \
   --flatten="bindings[].members" \
-  --filter="bindings.members=serviceAccount:${PROJECT_ID}.svc.id.goog[flux-system/kustomize-controller]" \
+  --filter="bindings.members=serviceAccount:${GCP_PROJECT_ID}.svc.id.goog[flux-system/kustomize-controller]" \
   --format="value(bindings.role)" | grep -q "roles/iam.workloadIdentityUser"; then
   gcloud iam service-accounts add-iam-policy-binding \
-    ${SOPS_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
-    --member="serviceAccount:${PROJECT_ID}.svc.id.goog[flux-system/kustomize-controller]" \
+    ${SOPS_SERVICE_ACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com \
+    --member="serviceAccount:${GCP_PROJECT_ID}.svc.id.goog[flux-system/kustomize-controller]" \
     --role="roles/iam.workloadIdentityUser"
 else
     echo "Workload identity binding for kustomize-controller already exists"
 fi
 
 # Bind KCC's controller-manager to the KCC service account if not already bound
-if ! gcloud iam service-accounts get-iam-policy ${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
+if ! gcloud iam service-accounts get-iam-policy ${KCC_SERVICE_ACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com \
   --flatten="bindings[].members" \
-  --filter="bindings.members=serviceAccount:${PROJECT_ID}.svc.id.goog[cnrm-system/cnrm-controller-manager]" \
+  --filter="bindings.members=serviceAccount:${GCP_PROJECT_ID}.svc.id.goog[cnrm-system/cnrm-controller-manager]" \
   --format="value(bindings.role)" | grep -q "roles/iam.workloadIdentityUser"; then
   gcloud iam service-accounts add-iam-policy-binding \
-    ${KCC_SERVICE_ACCOUNT_NAME}@${PROJECT_ID}.iam.gserviceaccount.com \
-    --member="serviceAccount:${PROJECT_ID}.svc.id.goog[cnrm-system/cnrm-controller-manager]" \
+    ${KCC_SERVICE_ACCOUNT_NAME}@${GCP_PROJECT_ID}.iam.gserviceaccount.com \
+    --member="serviceAccount:${GCP_PROJECT_ID}.svc.id.goog[cnrm-system/cnrm-controller-manager]" \
     --role="roles/iam.workloadIdentityUser"
 else
     echo "Workload identity binding for cnrm-controller-manager already exists"
@@ -197,9 +197,19 @@ kubectl create configmap cluster-config -n flux-system \
   --from-literal=REPO_NAME=$DEFAULT_GITHUB_REPO \
   --dry-run=client -o yaml | kubectl apply -f -
 
+# Bootstrap FluxCD - This is generally already an idempotent command
+flux bootstrap github \
+  --owner="$DEFAULT_GITHUB_OWNER" \
+  --repository="$DEFAULT_GITHUB_REPO" \
+  --path=kubernetes/clusters/$CLUSTER_NAME \
+  --branch="$DEFAULT_GITHUB_BRANCH" \
+  --personal=true \
+  --private=false \
+  --timeout=10m0s
+
 # Create public IP for XLB
-gcloud compute addresses create team-alpha-tenant-api --global --project $PROJECT_ID
-export ALPHA_IP=`gcloud compute addresses describe team-alpha-tenant-api --project $PROJECT_ID --global --format="value(address)"`
+gcloud compute addresses create team-alpha-tenant-api --global --project $GCP_PROJECT_ID
+export ALPHA_IP=`gcloud compute addresses describe team-alpha-tenant-api --project $GCP_PROJECT_ID --global --format="value(address)"`
 echo -e "GCLB_IP is $ALPHA_IP"
 
 cat <<EOF > alpha-openapi.yaml
@@ -209,20 +219,20 @@ info:
   title: "Cloud Endpoints DNS"
   version: "1.0.0"
 paths: {}
-host: "team-alpha.endpoints.${PROJECT_ID}.cloud.goog"
+host: "team-alpha.endpoints.${GCP_PROJECT_ID}.cloud.goog"
 x-google-endpoints:
-- name: "team-alpha.endpoints.${PROJECT_ID}.cloud.goog"
+- name: "team-alpha.endpoints.${GCP_PROJECT_ID}.cloud.goog"
   target: "${ALPHA_IP}"
 EOF
-gcloud endpoints services deploy alpha-openapi.yaml --project $PROJECT_ID
+gcloud endpoints services deploy alpha-openapi.yaml --project $GCP_PROJECT_ID
 
 # Create Certificate
 gcloud compute ssl-certificates create whereamicert \
-  --project $PROJECT_ID \
-  --domains=$DEMO_NAME.endpoints.$PROJECT_ID.cloud.goog \
+  --project $GCP_PROJECT_ID \
+  --domains=$DEMO_NAME.endpoints.$GCP_PROJECT_ID.cloud.goog \
   --global
 
 gcloud compute ssl-certificates create alpha-tenant-cert \
-      --project $PROJECT_ID \
-      --domains="team-alpha.endpoints.$PROJECT_ID.cloud.goog" \
+      --project $GCP_PROJECT_ID \
+      --domains="team-alpha.endpoints.$GCP_PROJECT_ID.cloud.goog" \
       --global

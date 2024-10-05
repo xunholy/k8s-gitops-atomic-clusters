@@ -13,6 +13,15 @@ spec:
     - name: team-alpha-external-http
       namespace: team-alpha-tenant
   rules:
+    - matches:
+        - headers:
+            - name: env
+              value: canary
+      backendRefs:
+        - group: net.gke.io
+          kind: ServiceImport
+          name: whereami-canary
+          port: 80
     - backendRefs:
         - group: net.gke.io
           kind: ServiceImport
