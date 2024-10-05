@@ -9,7 +9,7 @@ metadata:
     cnrm.cloud.google.com/remove-default-node-pool: "true"
 spec:
   location: australia-southeast2
-  minMasterVersion: "1.30.3-gke.1969001"
+  minMasterVersion: "1.30.5-gke.1014001"
   gatewayApiConfig:
     channel: "CHANNEL_STANDARD"
   initialNodeCount: 1
