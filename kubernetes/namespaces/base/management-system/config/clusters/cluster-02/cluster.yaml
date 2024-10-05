@@ -46,7 +46,7 @@ spec:
   spec:
     multiclusteringress:
       configMembershipRef:
-        name: cluster-01
+        name: cluster-02
 ---
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Alert
