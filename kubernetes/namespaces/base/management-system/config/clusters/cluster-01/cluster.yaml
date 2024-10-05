@@ -6,13 +6,49 @@ metadata:
   namespace: management-system
   annotations:
     cnrm.cloud.google.com/project-id: ${GCP_PROJECT_ID}
+    cnrm.cloud.google.com/remove-default-node-pool: "true"
 spec:
-  enableAutopilot: true
   location: australia-southeast1
+  minMasterVersion: "1.30.3-gke.1969001"
+  gatewayApiConfig:
+    channel: "CHANNEL_STANDARD"
+  initialNodeCount: 1
   releaseChannel:
-    channel: RAPID
+    channel: "REGULAR"
+  subnetworkRef:
+    external: "projects/devops-melb-24-436709/regions/australia-southeast1/subnetworks/nodes-australia-southeast1"
+  networkRef:
+    external: "projects/devops-melb-24-436709/global/networks/gitops-gke-clusters"
   workloadIdentityConfig:
     workloadPool: ${GCP_PROJECT_ID}.svc.id.goog
+  datapathProvider: "ADVANCED_DATAPATH"
+---
+apiVersion: container.cnrm.cloud.google.com/v1beta1
+kind: ContainerNodePool
+metadata:
+  name: e2-highcpu-np
+  namespace: management-system
+spec:
+  clusterRef:
+    name: cluster-01
+  location: australia-southeast1   # Single zone for node pool in regional cluster for POC cost and quotas
+  autoscaling:
+    minNodeCount: 2
+    maxNodeCount: 5
+  management:
+    autoRepair: true
+    autoUpgrade: true # TODO
+  nodeConfig:
+    machineType: "e2-highcpu-4"
+    spot: true
+    diskSizeGb: 50
+    oauthScopes:
+      - "https://www.googleapis.com/auth/logging.write"
+      - "https://www.googleapis.com/auth/monitoring"
+      - "https://www.googleapis.com/auth/devstorage.read_write"
+  upgradeSettings:
+    maxSurge: 1
+    maxUnavailable: 1
 ---
 apiVersion: gkehub.cnrm.cloud.google.com/v1beta1
 kind: GKEHubMembership

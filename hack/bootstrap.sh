@@ -7,6 +7,7 @@
 # https://fluxcd.io/flux/guides/mozilla-sops/#google-cloud
 
 set -eou pipefail
+set -x
 
 if ! command -v sops &> /dev/null; then
     echo "sops must be installed" && exit 1
@@ -181,16 +182,35 @@ if ! gcloud kms keys list --location global --keyring sops --format="value(name)
   gcloud kms keys list --location global --keyring sops
 fi
 
+NODEPOOL_NAME="np"
+ZONE="australia-southeast1-a"
+gcloud container clusters create $CLUSTER_NAME \
+    --cluster-version=$CLUSTER_VERSION \
+    --enable-dataplane-v2 \
+    --enable-ip-alias \
+    --network=$CLUSTER_VPC \
+    --subnetwork=$CLUSTER_SUBNET \
+    --node-locations=$ZONE \
+    --disk-size=50GB \
+    --total-max-nodes=4 \
+    --workload-pool=${PROJECT_ID}.svc.id.goog \
+    --workload-metadata=GKE_METADATA
 
-# Setup the Management GKE cluster only if it doesn't exist
-if ! gcloud container clusters list --region=$CLUSTER_REGION --filter="name=$CLUSTER_NAME" --format="value(name)" | grep -q "$CLUSTER_NAME"; then
-  gcloud container clusters create-auto $CLUSTER_NAME \
-    --region $CLUSTER_REGION \
-    --project $PROJECT_ID \
-    --release-channel rapid
-else
-  echo "Cluster $CLUSTER_NAME already exists"
-fi
+gcloud container node-pools delete default-pool \
+    --cluster=$CLUSTER_NAME \
+    --region=australia-southeast1 \
+    --quiet
+
+REGION="australia-southeast1"
+gcloud container node-pools create $NODEPOOL_NAME \
+    --cluster=$CLUSTER_NAME \
+    --region=$REGION \
+    --location-policy=BALANCED \
+    --enable-autoscaling \
+    --total-max-nodes=4 \
+    --machine-type=e2-standard-4 \
+    --spot
+
 
 # Setup Workload Identity for FluxCD and KCC
 # Bind FluxCD's kustomize-controller to the SOPS service account if not already bound
