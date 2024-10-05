@@ -8,7 +8,7 @@ spec:
   interval: 30m
   retryInterval: 1m
   timeout: 3m
-  path: "./apps/base/demo/whereami"
+  path: "./apps/base/demo/app/whereami"
   prune: true
   wait: true
   force: true
