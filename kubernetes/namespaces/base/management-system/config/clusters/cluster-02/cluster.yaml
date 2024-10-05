@@ -5,10 +5,10 @@ metadata:
   name: cluster-02
   namespace: management-system
   annotations:
-    cnrm.cloud.google.com/project-id: devops-melb-24-436709
+    cnrm.cloud.google.com/project-id: ${GCP_PROJECT_ID}
     cnrm.cloud.google.com/remove-default-node-pool: "true"
 spec:
-  location: australia-southeast2
+  location: australia-southeast1
   minMasterVersion: "1.30.4"
   gatewayApiConfig:
     channel: "CHANNEL_STANDARD"
@@ -16,11 +16,11 @@ spec:
   releaseChannel:
     channel: "REGULAR"
   subnetworkRef:
-    external: "projects/devops-melb-24-436709/regions/australia-southeast2/subnetworks/nodes-australia-southeast2"
+    external: "projects/devops-melb-24-436709/regions/australia-southeast1/subnetworks/nodes-australia-southeast1"
   networkRef:
     external: "projects/devops-melb-24-436709/global/networks/gitops-gke-clusters"
   workloadIdentityConfig:
-    identityNamespace: "devops-melb-24-436709.svc.id.goog"
+    workloadPool: ${GCP_PROJECT_ID}.svc.id.goog
   datapathProvider: "ADVANCED_DATAPATH"
 ---
 apiVersion: container.cnrm.cloud.google.com/v1beta1
@@ -31,7 +31,7 @@ metadata:
 spec:
   clusterRef:
     name: cluster-02
-  location: australia-southeast2
+  location: australia-southeast1   # Single zone for node pool in regional cluster for POC cost and quotas
   autoscaling:
     minNodeCount: 1
     maxNodeCount: 3
@@ -56,12 +56,12 @@ metadata:
   name: cluster-02
   namespace: management-system
   annotations:
-    cnrm.cloud.google.com/project-id: devops-melb-24-436709
+    cnrm.cloud.google.com/project-id: ${GCP_PROJECT_ID}
 spec:
   location: global
   authority:
     # Issuer must contain a link to a valid JWT issuer. Your ContainerCluster is one. To use it, replace ${PROJECT_ID?} with your project ID.
-    issuer: https://container.googleapis.com/v1/projects/devops-melb-24-436709/locations/australia-southeast2/clusters/cluster-02
+    issuer: https://container.googleapis.com/v1/projects/${GCP_PROJECT_ID}/locations/australia-southeast1/clusters/cluster-02
   endpoint:
     gkeCluster:
       resourceRef:
@@ -73,7 +73,7 @@ metadata:
   name: cluster-02
   namespace: management-system
   annotations:
-    cnrm.cloud.google.com/project-id: devops-melb-24-436709
+    cnrm.cloud.google.com/project-id: ${GCP_PROJECT_ID}
 spec:
   location: global
   # The resourceID must be "multiclusteringress" if you want to use Multi Cluster Gateway API
@@ -99,6 +99,8 @@ spec:
   providerRef:
     name: flux-system-dispatch
   eventMetadata:
-    project: "devops-melb-24-436709"
+    project: "${GCP_PROJECT_ID}"
     cluster: "cluster-02"
-    location: "australia-southeast2"
+    location: "australia-southeast1"
+  inclusionList:
+    - ".*check passed.*"
