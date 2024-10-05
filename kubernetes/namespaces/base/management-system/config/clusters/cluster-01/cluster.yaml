@@ -76,8 +76,8 @@ metadata:
     cnrm.cloud.google.com/project-id: ${GCP_PROJECT_ID}
 spec:
   location: global
-  # The resourceID must be "multiclusteringress" if you want to use multi-cluster
-  # ingress feature.
+  # The resourceID must be "multiclusteringress" if you want to use Multi Cluster Gateway API
+  # https://cloud.google.com/kubernetes-engine/docs/how-to/enabling-multi-cluster-gateways#enable_multi-cluster_services
   resourceID: multiclusteringress
   spec:
     multiclusteringress:
