@@ -43,7 +43,7 @@ patches:
                               value: whereami-canary
             target:
               kind: HelmRelease
-              name: demo
+              name: whereami
               namespace: demo
     target:
       kind: Kustomization
