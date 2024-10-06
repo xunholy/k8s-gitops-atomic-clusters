@@ -11,9 +11,9 @@ roleRef:
   kind: ClusterRole
   name: cluster-admin
 subjects:
-- apiGroup: rbac.authorization.k8s.io
-  kind: User
-  name: gotk:team-alpha-tenant:reconciler
-- kind: ServiceAccount
-  name: team-alpha
-  namespace: team-alpha-tenant
+  - apiGroup: rbac.authorization.k8s.io
+    kind: User
+    name: gotk:team-alpha-tenant:reconciler
+  - kind: ServiceAccount
+    name: team-alpha
+    namespace: team-alpha-tenant

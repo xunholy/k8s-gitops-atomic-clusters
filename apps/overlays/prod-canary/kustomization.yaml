@@ -5,7 +5,7 @@ kind: Kustomization
 resources:
   - ../../base/demo
 
-# This is needed to ensure that the ServiceExport on the canary cluster has the correct ServiceImport name.
+# REQUIRED: This is needed to ensure that the ServiceExport on the canary cluster has the correct ServiceImport name.
 patches:
   - patch: |-
       apiVersion: kustomize.toolkit.fluxcd.io/v1
