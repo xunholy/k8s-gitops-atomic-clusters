@@ -8,7 +8,7 @@ on:
       projectID:
         type: string
         description: "GCP Project ID"
-        default: "devops-melb-24-436709"
+        default: "atomic-gke-clusters"
         required: true
       clusterName:
         type: string
@@ -54,7 +54,7 @@ jobs:
         uses: "google-github-actions/auth@v1"
         with:
           token_format: "access_token"
-          workload_identity_provider: "projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-oidc-pool/providers/github-provider-3"
+          workload_identity_provider: "projects/${{ secrets.GCP_PROJECT_NUMBER }}/locations/global/workloadIdentityPools/github-oidc-pool/providers/github-provider"
           service_account: "github-oidc@${{ secrets.GCP_PROJECT_ID }}.iam.gserviceaccount.com"
 
       # The KUBECONFIG env var is automatically exported and picked up by kubectl.

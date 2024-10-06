@@ -2,7 +2,7 @@
 apiVersion: container.cnrm.cloud.google.com/v1beta1
 kind: ContainerCluster
 metadata:
-  name: cluster-02
+  name: cluster-03
   namespace: management-system
   annotations:
     cnrm.cloud.google.com/project-id: ${GCP_PROJECT_ID}
@@ -17,7 +17,7 @@ spec:
 apiVersion: gkehub.cnrm.cloud.google.com/v1beta1
 kind: GKEHubMembership
 metadata:
-  name: cluster-02
+  name: cluster-03
   namespace: management-system
   annotations:
     cnrm.cloud.google.com/project-id: ${GCP_PROJECT_ID}
@@ -25,16 +25,16 @@ spec:
   location: global
   authority:
     # Issuer must contain a link to a valid JWT issuer. Your ContainerCluster is one. To use it, replace ${PROJECT_ID?} with your project ID.
-    issuer: https://container.googleapis.com/v1/projects/${GCP_PROJECT_ID}/locations/australia-southeast2/clusters/cluster-02
+    issuer: https://container.googleapis.com/v1/projects/${GCP_PROJECT_ID}/locations/australia-southeast2/clusters/cluster-03
   endpoint:
     gkeCluster:
       resourceRef:
-        name: cluster-02
+        name: cluster-03
 ---
 apiVersion: gkehub.cnrm.cloud.google.com/v1beta1
 kind: GKEHubFeature
 metadata:
-  name: cluster-02
+  name: cluster-03
   namespace: management-system
   annotations:
     cnrm.cloud.google.com/project-id: ${GCP_PROJECT_ID}
@@ -46,25 +46,25 @@ spec:
   spec:
     multiclusteringress:
       configMembershipRef:
-        name: cluster-02
+        name: cluster-03
 ---
 apiVersion: notification.toolkit.fluxcd.io/v1beta2
 kind: Alert
 metadata:
-  name: cluster-02
+  name: cluster-03
   namespace: flux-system
 spec:
-  summary: "cluster-02"
+  summary: "cluster-03"
   eventSeverity: info
   eventSources:
     - kind: Kustomization
-      name: "cluster-02"
+      name: "cluster-03"
       namespace: flux-system
   providerRef:
     name: flux-system-dispatch
   eventMetadata:
     project: "${GCP_PROJECT_ID}"
-    cluster: "cluster-02"
+    cluster: "cluster-03"
     location: "australia-southeast2"
   inclusionList:
     - ".*check passed.*"
