@@ -31,6 +31,35 @@ This Git repository contains the following directories.
 └─📁 tenants        # Teams onboarded as tenants
 ```
 
+This diagram illustrates the repository structure and its relationship to Kubernetes and cloud resources, showing the provisioning sequence and dependencies between components.
+
+<img src="./docs/images/folder-structure-annotated.png" width="750" alt="visual representation of folder structure and mapped resources"/>
+
+
+For a more detailed step by step walk-through expand the section below.
+
+<details>
+  <summary>Step by step</summary>
+
+Folder layout and basic architecture:
+
+<img src="./docs/images/step1.png" width="750" alt="step 1 - folder layout"/>
+
+
+After Flux is installed on the management cluster, it retrieves the Kubernetes Resource Model (KRM) definitions for workload clusters. The Kubernetes Config Connector then creates these clusters according to their specifications. Once complete, Flux's notification system triggers a GitHub Actions workflow to bootstrap Flux on each workload cluster.
+
+
+<img src="./docs/images/step2.png" width="750" alt="step 2 - first workload cluster"/>
+
+
+The workload cluster's Flux instance pulls configuration from two sources: platform configurations from the platform directory and team configurations from their respective application repositories. For demonstration purposes, all team configurations are simplified into a single `apps` folder in the same repository as platform definitions.
+
+
+<img src="./docs/images/step3.png" width="750" alt="step 3 - Flux on workload cluster"/>
+
+
+</details>
+
 ## 🖥️ Technology Stack
 
 The below showcases the collection of open-source solutions currently implemented in the cluster. Each of these components has been documented, and their deployment is managed using FluxCD, which adheres to GitOps principles.
